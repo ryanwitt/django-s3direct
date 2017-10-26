@@ -60,7 +60,7 @@ def get_upload_params(request):
     endpoint = 's3.amazonaws.com' if region == 'us-east-1' else ('s3-%s.amazonaws.com' % region)
 
     # AWS credentials are not required for publicly-writable buckets
-    access_key_id = getattr(settings, 'AWS_ACCESS_KEY_ID', None)
+    access_key_id = getattr(settings, 'DIRECT_AWS_ACCESS_KEY_ID', None)
 
     bucket_url = 'https://{0}/{1}'.format(endpoint, bucket)
 
@@ -83,6 +83,6 @@ def get_upload_params(request):
 def generate_aws_v4_signature(request):
     message = unquote(request.POST['to_sign'])
     signing_date = datetime.strptime(request.POST['datetime'], '%Y%m%dT%H%M%SZ')
-    signing_key = get_aws_v4_signing_key(settings.AWS_SECRET_ACCESS_KEY, signing_date, settings.S3DIRECT_REGION, 's3')
+    signing_key = get_aws_v4_signing_key(settings.DIRECT_AWS_SECRET_ACCESS_KEY, signing_date, settings.S3DIRECT_REGION, 's3')
     signature = get_aws_v4_signature(signing_key, message)
     return HttpResponse(signature)
